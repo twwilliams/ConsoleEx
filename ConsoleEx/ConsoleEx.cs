@@ -27,6 +27,21 @@ namespace TWWilliams
                 verbose);
         }
 
+        /// <summary>
+        /// Prompts for the user to enter a decimal on the command line. Will continue
+        /// prompting until a decimal that meets the requirements is supplied.
+        /// 
+        /// To have no range constraints on the decimal, do not specify either minValue
+        /// or maxValue.
+        /// </summary>
+        /// <param name="prompt">The question to ask the user</param>
+        /// <param name="minValue">Optional. The supplied decimal must be greater than
+        /// or equal to this value. Defaults to Decimal.MinValue.</param>
+        /// <param name="maxValue">Optional. The supplied decimal must be less than or
+        /// equal to this value. Defaults to Decimal.MaxValue.</param>
+        /// <param name="verbose">Optional. If true, show a message with valid range
+        /// when invalid response given. Defaults to true.</param>
+        /// <returns>The supplied decimal</returns>
         public static decimal PromptDecimal(string prompt,
             decimal minValue = decimal.MinValue, decimal maxValue = decimal.MaxValue,
             bool verbose = true)
@@ -34,6 +49,7 @@ namespace TWWilliams
             return PromptDecimalOrInteger(prompt, "decimal", minValue, maxValue,
                 verbose);
         }
+
         private static decimal PromptDecimalOrInteger(string prompt, string type,
             decimal minValue, decimal maxValue, bool verbose)
         {
