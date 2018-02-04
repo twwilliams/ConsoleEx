@@ -37,10 +37,7 @@ namespace TWWilliams
         private static decimal PromptDecimalOrInteger(string prompt, string type,
             decimal minValue, decimal maxValue, bool verbose)
         {
-            decimal result = 0;
-            decimal responseDecimal;
-            int responseInt;
-            bool isValid = false;
+            decimal result;
             bool showMessage = false;
 
             do
@@ -49,31 +46,27 @@ namespace TWWilliams
 
                 response = GetResponse(prompt, type, minValue, maxValue, showMessage);
 
-                if (type == "integer")
+                try
                 {
-                    if (!int.TryParse(response, out responseInt))
+                    result = (type == "integer")
+                        ? Convert.ToInt32(response)
+                        : Convert.ToDecimal(response);
+
+                    if (IsInRange(result, minValue, maxValue))
                     {
-                        showMessage = verbose;
-                        continue;
+                        return result;
                     }
-                    result = responseInt;
+                    showMessage = verbose;
                 }
-                else
+                catch (Exception e)
+                when (e is OverflowException ||
+                      e is FormatException ||
+                      e is ArgumentNullException)
                 {
-                    if (!decimal.TryParse(response, out responseDecimal))
-                    {
-                        showMessage = verbose;
-                        continue;
-                    }
-                    result = responseDecimal;
+                    showMessage = verbose;
+                    continue;
                 }
-
-                isValid = IsInRange(result, minValue, maxValue);
-                showMessage = verbose;
-
-            } while (!(isValid));
-
-            return result;
+            } while (true);
         }
 
         private static bool IsInRange(decimal value, decimal minValue, decimal maxValue)
