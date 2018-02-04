@@ -5,10 +5,11 @@ namespace TWWilliams
     public static class ConsoleEx
     {
         /// <summary>
-        /// Prompts for the user to enter an integer on the command line. Will continue prompting until an integer that
-        /// meets the requirements is supplied.
+        /// Prompts for the user to enter an integer on the command line. Will continue
+        /// prompting until an integer that meets the requirements is supplied.
         /// 
-        /// To have no range constraints on the integer, do not specify either minValue or maxValue.
+        /// To have no range constraints on the integer, do not specify either minValue
+        /// or maxValue.
         /// </summary>
         /// <param name="prompt">The question to ask the user</param>
         /// <param name="minValue">Optional. The supplied integer must be greater than
@@ -22,38 +23,23 @@ namespace TWWilliams
             int minValue = int.MinValue, int maxValue = int.MaxValue,
             bool verbose = true)
         {
-            int result;
-            bool isValid = false;
-            bool showMessage = false;
-
-            do
-            {
-                string response = "";
-
-                response = GetResponse(prompt, "integer", minValue, maxValue, showMessage);
-
-                if (!int.TryParse(response, out result))
-                {
-                    showMessage = verbose;
-                    continue;
-                }
-
-                if (result >= minValue && result <= maxValue)
-                {
-                    isValid = true;
-                }
-                showMessage = verbose;
-
-            } while (!(isValid));
-
-            return result;
+            return (int)PromptDecimalOrInteger(prompt, "integer", minValue, maxValue,
+                verbose);
         }
 
         public static decimal PromptDecimal(string prompt,
             decimal minValue = decimal.MinValue, decimal maxValue = decimal.MaxValue,
             bool verbose = true)
         {
-            decimal result;
+            return PromptDecimalOrInteger(prompt, "decimal", minValue, maxValue,
+                verbose);
+        }
+        private static decimal PromptDecimalOrInteger(string prompt, string type,
+            decimal minValue, decimal maxValue, bool verbose)
+        {
+            decimal result = 0;
+            decimal responseDecimal;
+            int responseInt;
             bool isValid = false;
             bool showMessage = false;
 
@@ -61,18 +47,28 @@ namespace TWWilliams
             {
                 string response = "";
 
-                response = GetResponse(prompt, "decimal", minValue, maxValue, showMessage);
+                response = GetResponse(prompt, type, minValue, maxValue, showMessage);
 
-                if (!decimal.TryParse(response, out result))
+                if (type == "integer")
                 {
-                    showMessage = verbose;
-                    continue;
+                    if (!int.TryParse(response, out responseInt))
+                    {
+                        showMessage = verbose;
+                        continue;
+                    }
+                    result = responseInt;
+                }
+                else
+                {
+                    if (!decimal.TryParse(response, out responseDecimal))
+                    {
+                        showMessage = verbose;
+                        continue;
+                    }
+                    result = responseDecimal;
                 }
 
-                if (result >= minValue && result <= maxValue)
-                {
-                    isValid = true;
-                }
+                isValid = IsInRange(result, minValue, maxValue);
                 showMessage = verbose;
 
             } while (!(isValid));
@@ -80,6 +76,10 @@ namespace TWWilliams
             return result;
         }
 
+        private static bool IsInRange(decimal value, decimal minValue, decimal maxValue)
+        {
+            return (value >= minValue && value <= maxValue);
+        }
 
         private static string GetResponse(string prompt, string type,
             decimal minValue, decimal maxValue, bool showMessage)
