@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TWWilliams
 {
@@ -15,8 +11,12 @@ namespace TWWilliams
         /// To have no range constraints on the integer, do not specify either minValue or maxValue.
         /// </summary>
         /// <param name="prompt">The question to ask the user</param>
-        /// <param name="minValue">Optional. The supplied integer must be greater than or equal to this value.</param>
-        /// <param name="maxValue">Optional. The supplied integer must be less than or equal to this value.</param>
+        /// <param name="minValue">Optional. The supplied integer must be greater than
+        /// or equal to this value. Defaults to Int32.MinValue.</param>
+        /// <param name="maxValue">Optional. The supplied integer must be less than or
+        /// equal to this value. Defaults to Int32.MaxValue.</param>
+        /// <param name="verbose">Optional. If true, show a message with valid range
+        /// when invalid response given. Defaults to true.</param>
         /// <returns>The supplied integer</returns>
         public static int PromptInteger(string prompt,
             int minValue = int.MinValue, int maxValue = int.MaxValue,
@@ -48,6 +48,7 @@ namespace TWWilliams
 
             return result;
         }
+
         public static decimal PromptDecimal(string prompt,
             decimal minValue = decimal.MinValue, decimal maxValue = decimal.MaxValue,
             bool verbose = true)
