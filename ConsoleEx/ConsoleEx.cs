@@ -90,6 +90,11 @@ namespace TWWilliams
             return (value >= minValue && value <= maxValue);
         }
 
+        // This is suppressed because we expect code calling this library to pass in the prompt
+        // string rather than being a resource controlled by this library
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization",
+            "CA1303:Do not pass literals as localized parameters",
+            MessageId = "System.Console.Write(System.String)")]
         private static string GetResponse(string prompt, NumberType type,
             decimal minValue, decimal maxValue, bool showMessage)
         {
