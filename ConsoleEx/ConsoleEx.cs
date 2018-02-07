@@ -23,7 +23,7 @@ namespace TWWilliams
             int minValue = int.MinValue, int maxValue = int.MaxValue,
             bool verbose = true)
         {
-            return (int)PromptDecimalOrInteger(prompt, "integer", minValue, maxValue,
+            return (int)PromptDecimalOrInteger(prompt, NumberType.Integer, minValue, maxValue,
                 verbose);
         }
 
@@ -46,11 +46,11 @@ namespace TWWilliams
             decimal minValue = decimal.MinValue, decimal maxValue = decimal.MaxValue,
             bool verbose = true)
         {
-            return PromptDecimalOrInteger(prompt, "decimal", minValue, maxValue,
+            return PromptDecimalOrInteger(prompt, NumberType.Decimal, minValue, maxValue,
                 verbose);
         }
 
-        private static decimal PromptDecimalOrInteger(string prompt, string type,
+        private static decimal PromptDecimalOrInteger(string prompt, NumberType type,
             decimal minValue, decimal maxValue, bool verbose)
         {
             decimal result;
@@ -64,7 +64,7 @@ namespace TWWilliams
 
                 try
                 {
-                    result = (type == "integer")
+                    result = (type == NumberType.Integer)
                         ? Convert.ToInt32(response)
                         : Convert.ToDecimal(response);
 
@@ -90,17 +90,23 @@ namespace TWWilliams
             return (value >= minValue && value <= maxValue);
         }
 
-        private static string GetResponse(string prompt, string type,
+        private static string GetResponse(string prompt, NumberType type,
             decimal minValue, decimal maxValue, bool showMessage)
         {
             if (showMessage)
             {
-                Console.WriteLine(
-                    $"Please supply a {type} value between {minValue} and {maxValue}.");
+                Console.WriteLine(HelpMessage(type, minValue, maxValue));
             }
 
             Console.Write($"{prompt} ");
             return Console.ReadLine();
+        }
+
+        private static string HelpMessage(NumberType type, decimal minValue, decimal maxValue)
+        {
+            string typeString = (type == NumberType.Integer) ? "whole number" : "decimal value";
+
+            return $"Please supply a {typeString} between {minValue} and {maxValue}.";
         }
 
         /// <summary>
@@ -124,5 +130,11 @@ namespace TWWilliams
             }
         }
 
+    }
+
+    public enum NumberType
+    {
+        Integer,
+        Decimal
     }
 }
