@@ -94,7 +94,8 @@ namespace TWWilliams
         {
             var (stdOut, stdIn) = ConsoleDefaults();
 
-            int result = RepromptWithInvalidFirstResponse("", response, $"{maxValue - 1}", null, maxValue);
+            int result = RepromptWithInvalidFirstResponse("", response, $"{maxValue - 1}", null,
+                                                          maxValue);
             Assert.Equal(maxValue - 1, result);
 
             ResetConsole(stdOut, stdIn);
@@ -102,8 +103,8 @@ namespace TWWilliams
 
 
         /// <summary>
-        /// Gets the default values for Console.Write* methods and Console.Read* methods so that they can be restored
-        /// at the end of the test.
+        /// Gets the default values for Console.Write* methods and Console.Read* methods so that
+        /// they can be restored at the end of the test.
         /// </summary>
         /// <returns>Tuple of TextWriter and TextReader representing Console default IO.</returns>
         private (TextWriter, TextReader) ConsoleDefaults()
@@ -126,14 +127,16 @@ namespace TWWilliams
         }
 
         /// <summary>
-        /// Redirect Console.Out and Console.In to drive ReadWrite.PromptForInteger() with an initial valid response.
+        /// Redirect Console.Out and Console.In to drive ReadWrite.PromptForInteger() with an
+        /// initial valid response.
         /// </summary>
         /// <param name="prompt">The prompt for the function to display</param>
         /// <param name="response">The response to supply to the function</param>
         /// <param name="minValue">The minimum acceptable value for the response</param>
         /// <param name="maxValue">The maximum acceptable value for the response</param>
         /// <returns></returns>
-        private int HandleValidResponse(string prompt, string response, int? minValue = null, int? maxValue = null)
+        private int HandleValidResponse(string prompt, string response, int? minValue = null,
+            int? maxValue = null)
         {
             using (StringWriter sw = new StringWriter())
             {
@@ -162,8 +165,9 @@ namespace TWWilliams
         }
 
         /// <summary>
-        /// Redirect Console.Out and Console.In to drive ReadWrite.PromptForInteger() with an initial invalid response,
-        /// followed by a valid one in order to cause the function to reprompt.
+        /// Redirect Console.Out and Console.In to drive ReadWrite.PromptForInteger() with an
+        /// initial invalid response, followed by a valid one in order to cause the function to
+        /// reprompt.
         /// </summary>
         /// <param name="prompt">The prompt for the function to display</param>
         /// <param name="invalidResponse">The invalid response to supply to the function</param>
@@ -171,8 +175,9 @@ namespace TWWilliams
         /// <param name="minValue">The minimum acceptable value for the response</param>
         /// <param name="maxValue">The maximum acceptable value for the response</param>
         /// <returns></returns>
-        private int RepromptWithInvalidFirstResponse(string prompt, string invalidResponse, string validResponse,
-                                     int? minValue = null, int? maxValue = null)
+        private int RepromptWithInvalidFirstResponse(string prompt, string invalidResponse,
+                                                     string validResponse, int? minValue = null,
+                                                     int? maxValue = null, bool verbose = true)
         {
             using (StringWriter sw = new StringWriter())
             {
@@ -188,14 +193,16 @@ namespace TWWilliams
                     if (minValue.HasValue)
                     {
                         return maxValue.HasValue
-                            ? ConsoleEx.PromptInteger(prompt, (int)minValue, (int)maxValue, verbose: false)
-                            : ConsoleEx.PromptInteger(prompt, (int)minValue, verbose: false);
+                            ? ConsoleEx.PromptInteger(prompt, (int)minValue, (int)maxValue,
+                                                      verbose: verbose)
+                            : ConsoleEx.PromptInteger(prompt, (int)minValue, verbose: verbose);
                     }
                     else
                     {
                         return maxValue.HasValue
-                            ? ConsoleEx.PromptInteger(prompt, int.MinValue, (int)maxValue, verbose: false)
-                            : ConsoleEx.PromptInteger(prompt);
+                            ? ConsoleEx.PromptInteger(prompt, int.MinValue, (int)maxValue,
+                                                      verbose: verbose)
+                            : ConsoleEx.PromptInteger(prompt, verbose: verbose);
                     }
                 }
             }
