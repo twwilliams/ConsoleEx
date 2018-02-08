@@ -65,7 +65,8 @@ namespace TWWilliams
         {
             var (stdOut, stdIn) = ConsoleDefaults();
 
-            int result = RepromptWithInvalidFirstResponse("", response, "15", int.MinValue);
+            (int result, string output) = RepromptWithInvalidFirstResponse("", response,
+                "15", int.MinValue);
             Assert.Equal(15, result);
 
             ResetConsole(stdOut, stdIn);
@@ -79,7 +80,8 @@ namespace TWWilliams
         {
             var (stdOut, stdIn) = ConsoleDefaults();
 
-            int result = RepromptWithInvalidFirstResponse("", response, $"{minValue + 1}", minValue);
+            (int result, string output) = RepromptWithInvalidFirstResponse("", response,
+                $"{minValue + 1}", minValue);
             Assert.Equal(minValue + 1, result);
 
             ResetConsole(stdOut, stdIn);
@@ -94,8 +96,8 @@ namespace TWWilliams
         {
             var (stdOut, stdIn) = ConsoleDefaults();
 
-            int result = RepromptWithInvalidFirstResponse("", response, $"{maxValue - 1}", null,
-                                                          maxValue);
+            (int result, string output) = RepromptWithInvalidFirstResponse("", response,
+                $"{maxValue - 1}", null, maxValue);
             Assert.Equal(maxValue - 1, result);
 
             ResetConsole(stdOut, stdIn);
@@ -175,10 +177,12 @@ namespace TWWilliams
         /// <param name="minValue">The minimum acceptable value for the response</param>
         /// <param name="maxValue">The maximum acceptable value for the response</param>
         /// <returns></returns>
-        private int RepromptWithInvalidFirstResponse(string prompt, string invalidResponse,
+        private (int, string) RepromptWithInvalidFirstResponse(string prompt, string invalidResponse,
                                                      string validResponse, int? minValue = null,
                                                      int? maxValue = null, bool verbose = true)
         {
+            int result_int;
+            string result_string;
             using (StringWriter sw = new StringWriter())
             {
                 Console.SetOut(sw);
@@ -192,20 +196,23 @@ namespace TWWilliams
                     Console.SetIn(sr);
                     if (minValue.HasValue)
                     {
-                        return maxValue.HasValue
+                        result_int = maxValue.HasValue
                             ? ConsoleEx.PromptInteger(prompt, (int)minValue, (int)maxValue,
                                                       verbose: verbose)
                             : ConsoleEx.PromptInteger(prompt, (int)minValue, verbose: verbose);
                     }
                     else
                     {
-                        return maxValue.HasValue
+                        result_int = maxValue.HasValue
                             ? ConsoleEx.PromptInteger(prompt, int.MinValue, (int)maxValue,
                                                       verbose: verbose)
                             : ConsoleEx.PromptInteger(prompt, verbose: verbose);
                     }
                 }
+
+                result_string = sw.ToString();
             }
+            return (result_int, result_string);
         }
     }
 }
