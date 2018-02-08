@@ -103,6 +103,38 @@ namespace TWWilliams
             ResetConsole(stdOut, stdIn);
         }
 
+        [Theory]
+        [InlineData("aoeunth")]
+        [InlineData("0.005")]
+        [InlineData("-530.0")]
+        [InlineData("-2147483649")] // One below int.MinValue
+        public void OutputsHelpMessageWithInvalidResponse(string response)
+        {
+            var (stdOut, stdIn) = ConsoleDefaults();
+
+            (int result, string output) = RepromptWithInvalidFirstResponse("", response, "15");
+
+            string expected =
+                $"Please supply a whole number between {int.MinValue} and {int.MaxValue}.";
+            Assert.Contains(expected, output);
+            ResetConsole(stdOut, stdIn);
+        }
+
+        [Theory]
+        [InlineData("aoeunth")]
+        [InlineData("0.005")]
+        [InlineData("-530.0")]
+        [InlineData("-2147483649")] // One below int.MinValue
+        public void DoesNotOutputHelpMessageWithVerboseOff(string response)
+        {
+            var (stdOut, stdIn) = ConsoleDefaults();
+
+            (int result, string output) =
+                RepromptWithInvalidFirstResponse("", response, "15", verbose: false);
+
+            Assert.DoesNotContain("whole number", output);
+            ResetConsole(stdOut, stdIn);
+        }
 
         /// <summary>
         /// Gets the default values for Console.Write* methods and Console.Read* methods so that
