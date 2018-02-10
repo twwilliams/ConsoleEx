@@ -33,7 +33,7 @@ namespace TWWilliams
         [InlineData("Give me a number", "10", 10)]
         [InlineData("", "-15", -15)]
         [InlineData("", "0", 0)]
-        public void ReturnsCorrectIntegerNumber(string prompt, string response, int expected)
+        public void ReturnsCorrectInteger(string prompt, string response, int expected)
         {
             var (stdOut, stdIn) = TestFx.ConsoleDefaults();
 
