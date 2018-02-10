@@ -56,8 +56,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PromptDecimalTests.cs" />
     <Compile Include="PromptIntegerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestFx.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

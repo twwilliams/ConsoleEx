@@ -12,7 +12,7 @@ namespace TWWilliams
         [InlineData("")]
         public void IssuesCorrectPrompt(string prompt)
         {
-            var (stdOut, stdIn) = ConsoleDefaults();
+            var (stdOut, stdIn) = TestFx.ConsoleDefaults();
 
             using (StringWriter sw = new StringWriter())
             {
@@ -26,7 +26,7 @@ namespace TWWilliams
                 }
             }
 
-            ResetConsole(stdOut, stdIn);
+            TestFx.ResetConsole(stdOut, stdIn);
         }
 
         [Theory]
@@ -35,12 +35,12 @@ namespace TWWilliams
         [InlineData("", "0", 0)]
         public void ReturnsCorrectNumber(string prompt, string response, int expected)
         {
-            var (stdOut, stdIn) = ConsoleDefaults();
+            var (stdOut, stdIn) = TestFx.ConsoleDefaults();
 
             int result = HandleValidResponse(prompt, response);
             Assert.Equal(expected, result);
 
-            ResetConsole(stdOut, stdIn);
+            TestFx.ResetConsole(stdOut, stdIn);
         }
 
         [Theory]
@@ -48,12 +48,12 @@ namespace TWWilliams
         [InlineData("-23", -100, 0, -23)]
         public void AcceptsNumbersInValidRange(string response, int min, int max, int expected)
         {
-            var (stdOut, stdIn) = ConsoleDefaults();
+            var (stdOut, stdIn) = TestFx.ConsoleDefaults();
 
             int result = HandleValidResponse("", response, min, max);
             Assert.Equal(expected, result);
 
-            ResetConsole(stdOut, stdIn);
+            TestFx.ResetConsole(stdOut, stdIn);
         }
 
         [Theory]
@@ -63,13 +63,13 @@ namespace TWWilliams
         [InlineData("-2147483649")] // One below int.MinValue
         public void RepromptsWhenResponseIsInvalid(string response)
         {
-            var (stdOut, stdIn) = ConsoleDefaults();
+            var (stdOut, stdIn) = TestFx.ConsoleDefaults();
 
             (int result, string output) = RepromptWithInvalidFirstResponse("", response,
                 "15", int.MinValue);
             Assert.Equal(15, result);
 
-            ResetConsole(stdOut, stdIn);
+            TestFx.ResetConsole(stdOut, stdIn);
         }
 
         [Theory]
@@ -78,13 +78,13 @@ namespace TWWilliams
         [InlineData("1000", 500000)]
         public void RepromptsWhenResponseBelowMinValue(string response, int minValue)
         {
-            var (stdOut, stdIn) = ConsoleDefaults();
+            var (stdOut, stdIn) = TestFx.ConsoleDefaults();
 
             (int result, string output) = RepromptWithInvalidFirstResponse("", response,
                 $"{minValue + 1}", minValue);
             Assert.Equal(minValue + 1, result);
 
-            ResetConsole(stdOut, stdIn);
+            TestFx.ResetConsole(stdOut, stdIn);
         }
 
         [Theory]
@@ -94,13 +94,13 @@ namespace TWWilliams
         [InlineData("-59", -100)]
         public void RepromptsWhenResponseAboveMaxValue(string response, int maxValue)
         {
-            var (stdOut, stdIn) = ConsoleDefaults();
+            var (stdOut, stdIn) = TestFx.ConsoleDefaults();
 
             (int result, string output) = RepromptWithInvalidFirstResponse("", response,
                 $"{maxValue - 1}", null, maxValue);
             Assert.Equal(maxValue - 1, result);
 
-            ResetConsole(stdOut, stdIn);
+            TestFx.ResetConsole(stdOut, stdIn);
         }
 
         [Theory]
@@ -110,14 +110,14 @@ namespace TWWilliams
         [InlineData("-2147483649")] // One below int.MinValue
         public void OutputsHelpMessageWithInvalidResponse(string response)
         {
-            var (stdOut, stdIn) = ConsoleDefaults();
+            var (stdOut, stdIn) = TestFx.ConsoleDefaults();
 
             (int result, string output) = RepromptWithInvalidFirstResponse("", response, "15");
 
             string expected =
                 $"Please supply a whole number between {int.MinValue} and {int.MaxValue}.";
             Assert.Contains(expected, output);
-            ResetConsole(stdOut, stdIn);
+            TestFx.ResetConsole(stdOut, stdIn);
         }
 
         [Theory]
@@ -127,37 +127,13 @@ namespace TWWilliams
         [InlineData("-2147483649")] // One below int.MinValue
         public void DoesNotOutputHelpMessageWithVerboseOff(string response)
         {
-            var (stdOut, stdIn) = ConsoleDefaults();
+            var (stdOut, stdIn) = TestFx.ConsoleDefaults();
 
             (int result, string output) =
                 RepromptWithInvalidFirstResponse("", response, "15", verbose: false);
 
             Assert.DoesNotContain("whole number", output);
-            ResetConsole(stdOut, stdIn);
-        }
-
-        /// <summary>
-        /// Gets the default values for Console.Write* methods and Console.Read* methods so that
-        /// they can be restored at the end of the test.
-        /// </summary>
-        /// <returns>Tuple of TextWriter and TextReader representing Console default IO.</returns>
-        private (TextWriter, TextReader) ConsoleDefaults()
-        {
-            TextWriter stdOut = Console.Out;
-            TextReader stdIn = Console.In;
-
-            return (stdOut, stdIn);
-        }
-
-        /// <summary>
-        /// Restores Console IO settings to defaults
-        /// </summary>
-        /// <param name="stdOut">The stdOut value obtained from ConsoleDefaults()</param>
-        /// <param name="stdIn">The stdin value obtained from ConsoleDefaults()</param>
-        private void ResetConsole(TextWriter stdOut, TextReader stdIn)
-        {
-            Console.SetOut(stdOut);
-            Console.SetIn(stdIn);
+            TestFx.ResetConsole(stdOut, stdIn);
         }
 
         /// <summary>
