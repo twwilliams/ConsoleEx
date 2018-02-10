@@ -4,12 +4,13 @@ using Xunit;
 
 namespace TWWilliams
 {
-    public class PromptTests
+    [Collection("Console Wrappers")]
+    public class PromptIntegerTests
     {
         [Theory]
         [InlineData("Give me a number")]
         [InlineData("")]
-        public void IssuesCorrectIntegerPrompt(string prompt)
+        public void IssuesCorrectPrompt(string prompt)
         {
             var (stdOut, stdIn) = TestFx.ConsoleDefaults();
 
@@ -21,28 +22,6 @@ namespace TWWilliams
                 {
                     Console.SetIn(sr);
                     ConsoleEx.PromptInteger(prompt);
-                    Assert.Equal(prompt + " ", sw.ToString());
-                }
-            }
-
-            TestFx.ResetConsole(stdOut, stdIn);
-        }
-
-        [Theory]
-        [InlineData("Give me a number")]
-        [InlineData("")]
-        public void IssuesCorrectDecimalPrompt(string prompt)
-        {
-            var (stdOut, stdIn) = TestFx.ConsoleDefaults();
-
-            using (StringWriter sw = new StringWriter())
-            {
-                Console.SetOut(sw);
-
-                using (StringReader sr = new StringReader("15" + Environment.NewLine))
-                {
-                    Console.SetIn(sr);
-                    ConsoleEx.PromptDecimal(prompt);
                     Assert.Equal(prompt + " ", sw.ToString());
                 }
             }
@@ -65,21 +44,6 @@ namespace TWWilliams
         }
 
         [Theory]
-        [InlineData("Give me a number", "10", 10)]
-        [InlineData("", "-15", -15)]
-        [InlineData("", "0", 0)]
-        [InlineData("", "1.5350", 1.535)]
-        public void ReturnsCorrectDecimalNumber(string prompt, string response, decimal expected)
-        {
-            var (stdOut, stdIn) = TestFx.ConsoleDefaults();
-
-            decimal result = TestFx.HandleValidDecimalResponse(prompt, response);
-            Assert.Equal(expected, result);
-
-            TestFx.ResetConsole(stdOut, stdIn);
-        }
-
-        [Theory]
         [InlineData("6", 1, 10, 6)]
         [InlineData("-23", -100, 0, -23)]
         public void AcceptsIntegersInValidRange(string response, int min, int max, int expected)
@@ -87,19 +51,6 @@ namespace TWWilliams
             var (stdOut, stdIn) = TestFx.ConsoleDefaults();
 
             int result = TestFx.HandleValidIntegerResponse("", response, min, max);
-            Assert.Equal(expected, result);
-
-            TestFx.ResetConsole(stdOut, stdIn);
-        }
-
-        [Theory]
-        [InlineData("6", 1, 10, 6)]
-        [InlineData("-23", -100, 0, -23)]
-        public void AcceptsDecimalsInValidRange(string response, decimal min, decimal max, decimal expected)
-        {
-            var (stdOut, stdIn) = TestFx.ConsoleDefaults();
-
-            decimal result = TestFx.HandleValidDecimalResponse("", response, min, max);
             Assert.Equal(expected, result);
 
             TestFx.ResetConsole(stdOut, stdIn);
