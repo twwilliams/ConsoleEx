@@ -120,9 +120,9 @@ namespace TWWilliams
         /// <param name="minValue">The minimum acceptable value for the response</param>
         /// <param name="maxValue">The maximum acceptable value for the response</param>
         /// <returns></returns>
-        internal static (int, string) RepromptWithInvalidFirstIntegerResponse(string prompt, string invalidResponse,
-                                                     string validResponse, int? minValue = null,
-                                                     int? maxValue = null, bool verbose = true)
+        internal static (int, string) RepromptWithInvalidFirstIntegerResponse(
+            string prompt, string invalidResponse, string validResponse, int? minValue = null,
+            int? maxValue = null, bool verbose = true)
         {
             int result_int;
             string result_string;
@@ -157,5 +157,44 @@ namespace TWWilliams
             }
             return (result_int, result_string);
         }
+
+        internal static (decimal, string) RepromptWithInvalidFirstDecimalResponse(
+            string prompt, string invalidResponse, string validResponse, decimal? minValue = null,
+            decimal? maxValue = null, bool verbose = true)
+        {
+            decimal result_decimal;
+            string result_string;
+            using (StringWriter sw = new StringWriter())
+            {
+                Console.SetOut(sw);
+
+                StringBuilder input = new StringBuilder();
+                input.AppendLine(invalidResponse);
+                input.AppendLine(validResponse);
+
+                using (StringReader sr = new StringReader(input.ToString()))
+                {
+                    Console.SetIn(sr);
+                    if (minValue.HasValue)
+                    {
+                        result_decimal = maxValue.HasValue
+                            ? ConsoleEx.PromptDecimal(prompt, (decimal)minValue, (decimal)maxValue,
+                                                      verbose: verbose)
+                            : ConsoleEx.PromptDecimal(prompt, (decimal)minValue, verbose: verbose);
+                    }
+                    else
+                    {
+                        result_decimal = maxValue.HasValue
+                            ? ConsoleEx.PromptDecimal(prompt, decimal.MinValue, (decimal)maxValue,
+                                                      verbose: verbose)
+                            : ConsoleEx.PromptDecimal(prompt, verbose: verbose);
+                    }
+                }
+
+                result_string = sw.ToString();
+            }
+            return (result_decimal, result_string);
+        }
+
     }
 }
